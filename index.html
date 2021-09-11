@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="style.css">
+        <script src="wordlist.js"></script>
+    </head>
+
+    <body>
+
+    <div id="typename">
+        <form id="emitName" action="">
+            <input id="name" autocomplete="off" autofocus><button>入室</button>
+        </form>
+    </div>
+
+    <div id="main">
+
+    自分：<span id="myname"></span><span id="host"></span><br>
+    参加者：<span id="member"></span>
+
+    <div id="maketeam">
+        <form id="team" action="">
+            <button type="submit">チーム決め</button>
+        </form>
+        <form id="start" action="">
+            <button type="submit" id="startbtn" disabled>開始</button>
+        </form>
+    </div>
+
+    <div id="title">
+        <table align="center">
+            <tr><th><font size=7><span id="turnplayer"></span>　<span id="limit"></span></font></th></tr>
+        </table>
+    </div>
+
+
+    <table align="center">
+        <tr>
+            <td>
+                <form id="rform">
+                    <table>
+                        <tr><th>赤チーム　残り<span id="rrest"></span></th></tr>
+                        <tr><td>スパイマスター：<span id="rmst"></span></td></tr>
+                        <tr><td>諜報員：<span id="rmem"></span></td></tr>
+                        <tr><td><div id="rmstbtn"><button type="submit">スパイマスターになる</button></div></td></tr>
+                    </table>
+                </form>
+            </td>
+            <td>
+                <form id="bform">
+                    <table>
+                        <tr><th>青チーム　残り<span id="brest"></span></th></tr>
+                        <tr><td>スパイマスター：<span id="bmst"></span></td></tr>
+                        <tr><td>諜報員：<span id="bmem"></span></td></tr>
+                        <tr><td><div id="bmstbtn"><button type="submit">スパイマスターになる</button></div></td></tr>
+                    </table>
+                </form>
+            </td>
+            <td>
+                <form id="gform">
+                    <table>
+                        <tr><th>緑チーム　残り<span id="grest"></span></th></tr>
+                        <tr><td>スパイマスター：<span id="gmst"></span></td></tr>
+                        <tr><td>諜報員：<span id="gmem"></span></td></tr>
+                        <tr><td><div id="gmstbtn"><button type="submit">スパイマスターになる</button></div></td></tr>
+                    </table>
+                </form>
+            </td>
+        </tr>
+    </table>
+
+
+    <table align="center">
+        <tr>
+            <td>
+                <div id="table">
+                    <table>
+                        <script type="text/javascript">
+                            for (let i = 0; i < 6; i++){
+                                document.write("<tr>")
+                                for (let j = 0; j < 6; j++){
+                                    document.write("<td><form id='form"+i+""+j+"'><button class='btn' type='submit' id='btn"+i+""+j+"' disabled><span id='word"+i+""+j+"'></span></button></form></td>")
+                                }
+                                document.write("</tr>")
+                            }
+                        </script>
+                    </table>
+                </div>
+            </td>
+            <td>
+                <table id="penalty">
+                    <tr><th colspan="2">時間オーバー</th></tr>
+                </table>
+                <textarea id="log" cols="30" rows="10" readonly></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+                <div id="typehint1"><input type="text" id="hinttxt" autocomplete="off"><select id="hintnum"></select></div>
+            </td>
+            <td>
+                <table>
+                    <td><div id="typehint2"><form id="hint"><button class="ans" type="submit" id="hintbtn" disabled>ヒント送信</button></form></div></td>
+                    <td><div id="turnchange"><form id="change"><button class="ans" type="submit" id="changebtn" disabled>推測終了</button></form></div></td>
+                    <td><div id="comeback"><form id="back"><button class="end" type="submit">戻る</button></form></div></td>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+
+    
+    <script type="text/javascript">
+        let btn = document.getElementById("hintnum")
+        btn.innerHTML = ""
+        for (let i = 0; i < 10; i++){
+            let option = document.createElement("option")
+            option.text = i
+            btn.appendChild(option)
+        }
+    </script>
+
+    </div>
+    
+    <script type="text/javascript">
+        document.getElementById("main").style.display = "none"
+        document.getElementById("rmstbtn").style.display = "none"
+        document.getElementById("bmstbtn").style.display = "none"
+        document.getElementById("gmstbtn").style.display = "none"
+        document.getElementById("title").style.display = "none"
+        document.getElementById("table").style.display = "none"
+        document.getElementById("typehint1").style.display = "none"
+        document.getElementById("typehint2").style.display = "none"
+        document.getElementById("turnchange").style.display = "none"
+        document.getElementById("comeback").style.display = "none"
+    </script>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="index.js"></script>
+    </body>
+
+</html>
