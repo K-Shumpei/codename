@@ -108,14 +108,27 @@ $(function () {
         }
         // ペナルティ
         let table = document.getElementById("penalty")
-        if (table.rows.length < member.length){
-            for (let i = 0; i < member.length; i++){
-                let row = table.insertRow(-1)
-                let cell1 = row.insertCell(-1)
-                let cell2 = row.insertCell(-1)
-                cell1.innerHTML = "<span id='member"+i+"'>"+member[i]+"</span>"
-                cell2.innerHTML = "<span id='limit"+i+"'>0</span>"
+        let savepena = []
+        let savename = []
+        let rowlen = table.rows.length
+        console.log(rowlen)
+        if (rowlen > 1){
+            for (let i = 0; i < rowlen; i++){
+                savepena.push(document.getElementById("limit" + i).textContent)
+                savename.push(document.getElementById("member" + i).textContent)
             }
+            // 今の表を削除
+            for (let i = 1; i < rowlen; i++){
+                table.deleteRow(rowlen - i)
+            }
+        }
+        // 新しい表を作成
+        for (let i = 0; i < member.length; i++){
+            let row = table.insertRow(-1)
+            let cell1 = row.insertCell(-1)
+            let cell2 = row.insertCell(-1)
+            cell1.innerHTML = "<span id='member"+i+"'>"+member[i]+"</span>"
+            cell2.innerHTML = "<span id='limit"+i+"'>0</span>"
         }
         
         // 残りの数字

@@ -75,6 +75,7 @@ io.on("connection", function(socket){
 
     // 開始
     socket.on("start", () => {
+        ranpanel = {r: [], b: [], g: [], x: ""}
         let ranwords = shuffle(wordlist.word())
         const panel = shuffle(wordlist.panel())
         for (let i = 0; i < 10; i++){
