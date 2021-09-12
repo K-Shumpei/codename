@@ -1,6 +1,9 @@
 $(function () {
     var socketio = io()
     var timer = ""
+    var penaname = []
+    var penascore = []
+    var penatime = []
 
     // 名前送信
     $("#emitName").submit(function() {
@@ -108,18 +111,18 @@ $(function () {
         }
         // ペナルティ
         let table = document.getElementById("penalty")
-        let savepena = []
-        let savename = []
-        let rowlen = table.rows.length
-        console.log(rowlen)
-        if (rowlen > 1){
-            for (let i = 0; i < rowlen; i++){
-                savepena.push(document.getElementById("limit" + i).textContent)
-                savename.push(document.getElementById("member" + i).textContent)
-            }
-            // 今の表を削除
-            for (let i = 1; i < rowlen; i++){
-                table.deleteRow(rowlen - i)
+        let len = table.rows.length
+
+        // 表に名前がある時、その値を保存
+        if (len > 1){
+            penaname = []
+            penascore = []
+            penatime = []
+            for (let i = 0; i < len - 1; i++){
+                penaname.push(document.getElementById("name" + (len - i - 2)).textContent)
+                penascore.push(document.getElementById("score" + (len - i - 2)).textContent)
+                penatime.push(document.getElementById("time" + (len - i - 2)).textContent)
+                table.deleteRow(len - i - 1)
             }
         }
         // 新しい表を作成
@@ -127,8 +130,14 @@ $(function () {
             let row = table.insertRow(-1)
             let cell1 = row.insertCell(-1)
             let cell2 = row.insertCell(-1)
-            cell1.innerHTML = "<span id='member"+i+"'>"+member[i]+"</span>"
-            cell2.innerHTML = "<span id='limit"+i+"'>0</span>"
+            let cell3 = row.insertCell(-1)
+            cell1.innerHTML = "<span id='name"+i+"'>"+member[i]+"</span>"
+            cell2.innerHTML = "<span id='score"+i+"'>0</span>"
+            cell3.innerHTML = "<span id='time"+i+"'>0</span>"
+            if (penaname.includes(member[i])){
+                cell2.innerHTML = "<span id='score"+i+"'>"+penascore[penaname.indexOf(member[i])]+"</span>"
+                cell3.innerHTML = "<span id='time"+i+"'>"+penatime[penaname.indexOf(member[i])]+"</span>"
+            }
         }
         
         // 残りの数字
@@ -186,9 +195,9 @@ $(function () {
         }
         // ペナルティ加算
         for (let i = 0; i < member.length; i++){
-            if (document.getElementById("member" + i).textContent == team[turn[count % 3].color + "mst"]){
-                const now = Number(document.getElementById("limit" + i).textContent)
-                document.getElementById("limit" + i).textContent = now + penalty
+            if (document.getElementById("name" + i).textContent == team[turn[count % 3].color + "mst"]){
+                const now = Number(document.getElementById("time" + i).textContent)
+                document.getElementById("time" + i).textContent = now + penalty
             }
         }
         // タイトル変更
@@ -209,6 +218,7 @@ $(function () {
 
     // 回答の正誤判定
     socketio.on("ans", (num, ranpanel, turn, count, team, judge) => {
+        const member = document.getElementById("member").textContent.split("、")
         // ログの記録
         const txt = turn[count % 3].jp + "の回答：" + document.getElementById("word" + num).textContent
         document.getElementById("log").value += txt + "\n"
@@ -243,19 +253,24 @@ $(function () {
             }
         }
         // 黒パネルを選んだとき
+        let win = ""
         if (ranpanel.x == num){
             document.getElementById("btn" + num).style.background = "#000000"
             document.getElementById("btn" + num).style.color = "#fff"
             document.getElementById("turnplayer").textContent = turn[count % 3].jp + "チームの負け！！！"
+            win = turn[count % 3].color
         }
 
         // 勝敗判定
         if (document.getElementById("rrest").textContent == 0){
             document.getElementById("turnplayer").textContent = "赤チームの勝ち！！！"
+            win = "r"
         } else if (document.getElementById("brest").textContent == 0){
             document.getElementById("turnplayer").textContent = "青チームの勝ち！！！"
+            win = "b"
         } else if (document.getElementById("grest").textContent == 0){
             document.getElementById("turnplayer").textContent = "緑チームの勝ち！！！"
+            win = "g"
         }
 
         // 勝敗がついたとき、ボタンの停止
@@ -265,6 +280,17 @@ $(function () {
             for (let i = 0; i < 6; i++){
                 for (let j = 0; j < 6; j++){
                     document.getElementById("btn" + i + j).disabled = true
+                }
+            }
+            // 得点加算
+            for (let i = 0; i < member.length; i++){
+                if (team[win].includes(document.getElementById("name" + i).textContent) || team[win + "mst"].includes(document.getElementById("name" + i).textContent)){
+                    let now = Number(document.getElementById("score" + i).textContent)
+                    if (document.getElementById("turnplayer").textContent.includes("勝ち")){
+                        document.getElementById("score" + i).textContent = now + 1
+                    } else if (document.getElementById("turnplayer").textContent.includes("負け")){
+                        document.getElementById("score" + i).textContent = now - 1
+                    }
                 }
             }
             // タイマーの停止
@@ -304,9 +330,9 @@ $(function () {
         document.getElementById("turnplayer").textContent = turn[(count + 1) % 3].jp + "のスパイマスターのターン"
         // ペナルティ加算
         for (let i = 0; i < member.length; i++){
-            if (team[turn[count % 3].color].includes(document.getElementById("member" + i).textContent)){
-                const now = Number(document.getElementById("limit" + i).textContent)
-                document.getElementById("limit" + i).textContent = now + penalty
+            if (team[turn[count % 3].color].includes(document.getElementById("name" + i).textContent)){
+                const now = Number(document.getElementById("time" + i).textContent)
+                document.getElementById("time" + i).textContent = now + penalty
             }
         }
         // タイマーリセット
