@@ -76,7 +76,7 @@ $(function () {
     })
 
     // 開始
-    socketio.on("start", function(word, panel, team){
+    socketio.on("start", function(word, panel, team, turn){
         const myname = document.getElementById("myname").textContent
         const member = document.getElementById("member").textContent.split("、")
 
@@ -92,16 +92,13 @@ $(function () {
             document.getElementById("typehint1").style.display = "block"
             document.getElementById("typehint2").style.display = "block"
             for (const color of panel.r){
-                document.getElementById("btn" + color).style.background = "#ff0000"
-                document.getElementById("btn" + color).style.color = "#fff"
+                document.getElementById("btn" + color).style.background = turn[0].code
             }
             for (const color of panel.b){
-                document.getElementById("btn" + color).style.background = "#0000ff"
-                document.getElementById("btn" + color).style.color = "#fff"
+                document.getElementById("btn" + color).style.background = turn[1].code
             }
             for (const color of panel.g){
-                document.getElementById("btn" + color).style.background = "#008000"
-                document.getElementById("btn" + color).style.color = "#fff"
+                document.getElementById("btn" + color).style.background = turn[2].code
             }
             document.getElementById("btn" + panel.x).style.background = "#000000"
             document.getElementById("btn" + panel.x).style.color = "#fff"
@@ -179,7 +176,7 @@ $(function () {
         if (team[turn[count % 3].color].includes(myname)){
             for (let i = 0; i < 6; i++){
                 for (let j = 0; j < 6; j++){
-                    if (document.getElementById("word" + i + j).textContent != "clear"){
+                    if (document.getElementById("word" + i + j).textContent != ""){
                         document.getElementById("btn" + i + j).disabled = false
                     }
                 }
@@ -222,8 +219,8 @@ $(function () {
         // ログの記録
         const txt = turn[count % 3].jp + "の回答：" + document.getElementById("word" + num).textContent
         document.getElementById("log").value += txt + "\n"
-        // パネルをclear
-        document.getElementById("word" + num).textContent = "clear"
+        // パネルを空欄にする
+        document.getElementById("word" + num).textContent = ""
 
         // 誤答したとき
         if (!judge){
@@ -248,7 +245,6 @@ $(function () {
         for (let i = 0; i < 3; i++){
             if (ranpanel[turn[i].color].includes(num)){
                 document.getElementById("btn" + num).style.background = turn[i].code
-                document.getElementById("btn" + num).style.color = "#fff"
                 document.getElementById(turn[i].color + "rest").textContent -= 1
             }
         }
@@ -273,13 +269,25 @@ $(function () {
             win = "g"
         }
 
-        // 勝敗がついたとき、ボタンの停止
+        // 勝敗がついたとき
         if (document.getElementById("turnplayer").textContent.includes("！！！")){
             document.getElementById("hintbtn").disabled = true
             document.getElementById("changebtn").disabled = true
             for (let i = 0; i < 6; i++){
                 for (let j = 0; j < 6; j++){
+                    // パネルボタンの停止
                     document.getElementById("btn" + i + j).disabled = true
+                    // 残りのパネルに色付け
+                    if (ranpanel.r.includes(String(i) + String(j))){
+                        document.getElementById("btn" + i + j).style.background = turn[0].code
+                    } else if (ranpanel.b.includes(String(i) + String(j))){
+                        document.getElementById("btn" + i + j).style.background = turn[1].code
+                    } else if (ranpanel.g.includes(String(i) + String(j))){
+                        document.getElementById("btn" + i + j).style.background = turn[2].code
+                    } else if (ranpanel.x == String(i) + String(j)){
+                        document.getElementById("btn" + i + j).style.background = "#000000"
+                        document.getElementById("btn" + i + j).style.color = "#fff"
+                    }
                 }
             }
             // 得点加算

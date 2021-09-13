@@ -25,7 +25,7 @@ let namelist = []
 let idlist = []
 let ranpanel = {r: [], b: [], g: [], x: ""}
 let team = {r: [], b: [], g: [], rmst: "", bmst: "", gmst: ""}
-let turn = [{color: "r", jp: "赤", code: "#ff0000"}, {color: "b", jp: "青", code: "#0000ff"}, {color: "g", jp: "緑", code: "#008000"}]
+let turn = [{color: "r", jp: "赤", code: "#ff97c2"}, {color: "b", jp: "青", code: "#8eb8ff"}, {color: "g", jp: "緑", code: "#86f9c5"}]
 let count = 0
 
 // 接続時の処理
@@ -77,7 +77,13 @@ io.on("connection", function(socket){
     socket.on("start", () => {
         ranpanel = {r: [], b: [], g: [], x: ""}
         let ranwords = shuffle(wordlist.word())
-        const panel = shuffle(wordlist.panel())
+        let panel = []
+        for (let i = 0; i < 6; i++){
+            for (let j = 0; j < 6; j++){
+                panel.push(String(i) + String(j))
+            }
+        }
+        panel = shuffle(panel)
         for (let i = 0; i < 10; i++){
             ranpanel.r.push(panel[i])
         }
@@ -92,7 +98,7 @@ io.on("connection", function(socket){
         for (let i = 0; i < 36; i++){
             result.push(ranwords[i])
         }
-        io.emit("start", result, ranpanel, team)
+        io.emit("start", result, ranpanel, team, turn)
     })
 
     // ヒント受信
