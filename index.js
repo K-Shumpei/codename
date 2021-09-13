@@ -5,6 +5,9 @@ $(function () {
     var penascore = []
     var penatime = []
 
+    // パネル枚数
+    const pnum = 6
+
     // 名前送信
     $("#emitName").submit(function() {
         const myname = document.getElementById("name").value
@@ -83,9 +86,9 @@ $(function () {
         document.getElementById("maketeam").style.display = "none"
         document.getElementById("table").style.display = "block"
         document.getElementById("title").style.display = "block"
-        for (let i = 0; i < 6; i++){
-            for (let j = 0; j < 6; j++){
-                document.getElementById("word" + i + j).textContent = word[i * 6 + j]
+        for (let i = 0; i < pnum; i++){
+            for (let j = 0; j < pnum; j++){
+                document.getElementById("word" + i + j).textContent = word[i * pnum + j]
             }
         }
         if (team.rmst == myname || team.bmst == myname || team.gmst == myname){
@@ -174,8 +177,8 @@ $(function () {
         }
         // ターン諜報員のボタン有効
         if (team[turn[count % 3].color].includes(myname)){
-            for (let i = 0; i < 6; i++){
-                for (let j = 0; j < 6; j++){
+            for (let i = 0; i < pnum; i++){
+                for (let j = 0; j < pnum; j++){
                     if (document.getElementById("word" + i + j).textContent != ""){
                         document.getElementById("btn" + i + j).disabled = false
                     }
@@ -183,8 +186,8 @@ $(function () {
             }
             document.getElementById("changebtn").disabled = false
         } else {
-            for (let i = 0; i < 6; i++){
-                for (let j = 0; j < 6; j++){
+            for (let i = 0; i < pnum; i++){
+                for (let j = 0; j < pnum; j++){
                     document.getElementById("btn" + i + j).disabled = true
                 }
             }
@@ -204,8 +207,8 @@ $(function () {
     })
 
     // 回答送信
-    for (let i = 0; i < 6; i++){
-        for (let j = 0; j < 6; j++){
+    for (let i = 0; i < pnum; i++){
+        for (let j = 0; j < pnum; j++){
             $("#form" + i + j).submit(function() {
                 socketio.emit("ans", String(i) + String(j))
                 return false
@@ -229,8 +232,8 @@ $(function () {
                 document.getElementById("hintbtn").disabled = false
             } else { // それ以外のボタン停止
                 document.getElementById("hintbtn").disabled = true
-                for (let i = 0; i < 6; i++){
-                    for (let j = 0; j < 6; j++){
+                for (let i = 0; i < pnum; i++){
+                    for (let j = 0; j < pnum; j++){
                         document.getElementById("btn" + i + j).disabled = true
                     }
                 }
@@ -273,8 +276,8 @@ $(function () {
         if (document.getElementById("turnplayer").textContent.includes("！！！")){
             document.getElementById("hintbtn").disabled = true
             document.getElementById("changebtn").disabled = true
-            for (let i = 0; i < 6; i++){
-                for (let j = 0; j < 6; j++){
+            for (let i = 0; i < pnum; i++){
+                for (let j = 0; j < pnum; j++){
                     // パネルボタンの停止
                     document.getElementById("btn" + i + j).disabled = true
                     // 残りのパネルに色付け
@@ -328,8 +331,8 @@ $(function () {
         } else { // それ以外のボタン停止
             document.getElementById("hintbtn").disabled = true
             document.getElementById("changebtn").disabled = true
-            for (let i = 0; i < 6; i++){
-                for (let j = 0; j < 6; j++){
+            for (let i = 0; i < pnum; i++){
+                for (let j = 0; j < pnum; j++){
                     document.getElementById("btn" + i + j).disabled = true
                 }
             }
@@ -354,8 +357,8 @@ $(function () {
     })
     socketio.on("end", () => {
         // パネルの色を戻す
-        for (let i = 0; i < 6; i++){
-            for (let j = 0; j < 6; j++){
+        for (let i = 0; i < pnum; i++){
+            for (let j = 0; j < pnum; j++){
                 document.getElementById("btn" + i + j).style.background = "#fff"
                 document.getElementById("btn" + i + j).style.color = "#000000"
             }

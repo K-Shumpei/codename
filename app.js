@@ -19,6 +19,11 @@ server.listen(PORT, () => {
     console.log("server starts on port: %d", PORT)
 })
 
+// パネル枚数
+const pnum = 6
+// 各チームのパネル枚数
+const tpnum = [10, 9, 9]
+
 const wordlist = require("./wordlist")
 
 let namelist = []
@@ -78,24 +83,24 @@ io.on("connection", function(socket){
         ranpanel = {r: [], b: [], g: [], x: ""}
         let ranwords = shuffle(wordlist.word())
         let panel = []
-        for (let i = 0; i < 6; i++){
-            for (let j = 0; j < 6; j++){
+        for (let i = 0; i < pnum; i++){
+            for (let j = 0; j < pnum; j++){
                 panel.push(String(i) + String(j))
             }
         }
         panel = shuffle(panel)
-        for (let i = 0; i < 10; i++){
+        for (let i = 0; i < tpnum[0]; i++){
             ranpanel.r.push(panel[i])
         }
-        for (let i = 10; i < 19; i++){
+        for (let i = tpnum[0]; i < tpnum[0] + tpnum[1]; i++){
             ranpanel.b.push(panel[i])
         }
-        for (let i = 19; i < 28; i++){
+        for (let i = tpnum[0] + tpnum[1]; i < tpnum[0] + tpnum[1] + tpnum[2]; i++){
             ranpanel.g.push(panel[i])
         }
-        ranpanel.x = panel[28]
+        ranpanel.x = panel[tpnum[0] + tpnum[1] + tpnum[2]]
         let result = []
-        for (let i = 0; i < 36; i++){
+        for (let i = 0; i < pnum ** 2; i++){
             result.push(ranwords[i])
         }
         io.emit("start", result, ranpanel, team, turn)
