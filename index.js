@@ -17,6 +17,16 @@ $(function () {
         return false
     })
 
+    // 再接続
+    $("#reconnect").submit(function() {
+        const myname = document.getElementById("name").value
+        if (document.getElementById("member").textContent.includes(myname)){
+            return false
+        }
+        socketio.emit("name", myname)
+        return false
+    })
+
     // 誰かが入室
     socketio.on("enter", function(namelist){
         if (document.getElementById("myname").textContent != ""){
